@@ -1,6 +1,10 @@
 import os
 from dotenv import load_dotenv
 from google import genai
+import warnings
+from api import get_light_values, set_light_values
+
+warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
 load_dotenv()
 api_key = os.getenv("GENAI_API_KEY")
@@ -8,7 +12,7 @@ if not api_key:
     raise ValueError("Please set the GENAI_API_KEY environment variable")
 
 client = genai.Client(api_key=api_key)
-MODEL = "gemini-1.5-flash"
+MODEL = "gemini-2.0-flash"
 PREPROMPT = (
     ""
 )
@@ -28,19 +32,18 @@ while True:
         )
 
         # Send the full conversation string to the streaming endpoint
-        stream = client.models.generate_content_stream(
+        stream = client.models.generate_content(
             model=MODEL,
             contents=full_conversation,
+            config = {
+                'tools': [set_light_values, get_light_values],
+            }
         )
         
-        response_text = ""
-        for token in stream:
-            print(token.text, end="", flush=True)
-            response_text += token.text
-        print()
+        print(stream.text)
         
         # Append the assistant response to memory
-        conversation.append({"role": "assistant", "text": response_text})
+        conversation.append({"role": "assistant", "text": stream.text})
 
     except KeyboardInterrupt:
         break
