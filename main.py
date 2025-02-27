@@ -1,5 +1,9 @@
 import os
+import sys
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 from dotenv import load_dotenv
+import warnings
 from google import genai
 import warnings
 from api import get_light_values, set_light_values
@@ -48,5 +52,3 @@ while True:
 
     except KeyboardInterrupt:
         break
-
-
