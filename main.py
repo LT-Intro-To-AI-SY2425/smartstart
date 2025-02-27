@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import warnings
 from google import genai
 import warnings
-from api import get_light_values, set_light_values
 from functions import getDateCommodityPrice
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
@@ -22,33 +21,69 @@ PREPROMPT = (
     ""
 )
 
-# Initialize conversation memory with a system-facing message
-conversation = [{"role": "system", "text": PREPROMPT}]
+app = Flask(__name__)
+CORS(app) 
 
-while True:
+def generate_gemini_response(conversation):
+    """
+    Given a conversation list (each element is a dict with 'role' and 'text'),
+    build a transcript and generate a response from the Gemini model.
+    """
+    # Build a single string transcript from the conversation
+    full_conversation = "\n".join(
+        f"{msg['role']}: {msg['text']}" for msg in conversation
+    )
+    response = client.models.generate_content(
+        model=MODEL,
+        contents=full_conversation,
+        config={
+            # Python functions to be used as tools in the model
+            'tools': [getDateCommodityPrice],
+        }
+    )
+    return response.text
+
+def run_cli_chat():
+    """Interactive CLI chat mode."""
+    conversation = []
+    if PREPROMPT:
+        conversation.append({"role": "system", "text": PREPROMPT})
     try:
-        prompt = input("> ")
-
-        conversation.append({"role": "user", "text": prompt})
-        
-        # Convert the conversation memory into a single string
-        full_conversation = "\n".join(
-            f"{msg['role']}: {msg['text']}" for msg in conversation
-        )
-
-        # Send the full conversation string to the streaming endpoint
-        stream = client.models.generate_content(
-            model=MODEL,
-            contents=full_conversation,
-            config = {
-                'tools': [getDateCommodityPrice],
-            }
-        )
-        
-        print(stream.text)
-        
-        # Append the assistant response to memory
-        conversation.append({"role": "assistant", "text": stream.text})
-
+        while True:
+            prompt = input("> ")
+            conversation.append({"role": "user", "text": prompt})
+            response = generate_gemini_response(conversation)
+            print(f"{response}\n")
+            conversation.append({"role": "assistant", "text": response})
     except KeyboardInterrupt:
-        break
+        pass
+
+# Flask API endpoints
+@app.route("/chat", methods=["POST"])
+def chat_endpoint():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid JSON data"}), 400
+
+    conversation = data.get("conversation", [])
+    prompt = data.get("prompt")
+    if prompt is None:
+        return jsonify({"error": "Field 'prompt' is required"}), 400
+
+    # Append the new user prompt
+    conversation.append({"role": "user", "text": prompt})
+
+    try:
+        response_text = generate_gemini_response(conversation)
+        # Append the assistant's response to conversation (if desired)
+        conversation.append({"role": "assistant", "text": response_text})
+        return jsonify({"response_text": response_text})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == "__main__":
+    # If a command-line argument 'cli' is passed, run interactive chat
+    if len(sys.argv) > 1 and sys.argv[1].lower() == "cli":
+        run_cli_chat()
+    else:
+        app.run(host="0.0.0.0", port=5050, debug=True)
