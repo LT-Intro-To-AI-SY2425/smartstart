@@ -18,7 +18,7 @@ if not api_key:
 client = genai.Client(api_key=api_key)
 MODEL = "gemini-2.0-flash"
 PREPROMPT = (
-    ""
+    "Never make up your own data - only get information from the functions. If the user asks for a commodity price for a certain year but does not specify a month or day, automatically assume the first day of the year. If the user asks for a commodity price for a certain month but does not specify a day, automatically assume the first day of the month. If you cannot find the price of a commodity for a certain date, automatically move to the next date until you find a price."
 )
 
 app = Flask(__name__)
