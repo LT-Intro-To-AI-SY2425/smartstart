@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from google import genai
 import warnings
 from api import get_light_values, set_light_values
+from functions import getDateCommodityPrice
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
@@ -36,7 +37,7 @@ while True:
             model=MODEL,
             contents=full_conversation,
             config = {
-                'tools': [set_light_values, get_light_values],
+                'tools': [getDateCommodityPrice],
             }
         )
         
@@ -47,3 +48,5 @@ while True:
 
     except KeyboardInterrupt:
         break
+
+
