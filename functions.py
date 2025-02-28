@@ -26,12 +26,25 @@ dtypes = {
     "HRW WHEAT": "float64",
     "COTTON": "float64",
 }
-
-
 df = pd.read_csv("commodity_futures.csv", dtype=dtypes, parse_dates=["Date"])
 
+def get_available_dates(name: str):
+    """Returns a sorted list of dates for which data is available for a given commodity.
 
-def getDateCommodityPrice(name: str, year: int, month: int, day: int):
+    This function checks the dataset and returns all unique dates where the 
+    specified commodity has a non-null price.
+
+    Args:
+        name: The name of the commodity.
+
+    Returns:
+        A sorted list of datetime objects representing the dates when data is available.
+    """
+    name = name.upper()
+    available_dates = df.loc[~df[name].isnull(), "Date"].unique()
+    return sorted(list(available_dates))
+
+def get_date_commodity_price(name: str, year: int, month: int, day: int):
     """Returns the price of a commodity at a specific date in USD.
 
     Args:
@@ -49,21 +62,38 @@ def getDateCommodityPrice(name: str, year: int, month: int, day: int):
         return df.loc[df["Date"] == date, name].values[0]
     except:
         return None
-    
 
+def get_month_commodity_prices(name: str, year: int, month: int):
+    """Returns a list of commodity prices for a specific month in USD.
 
-def getMonthCommodityPrices(name, year, month):
+    Args:
+        name: The name of the commodity.
+        year: The year of the desired month as YYYY.
+        month: The month of the desired month as MM.
+
+    Returns:
+        A list of commodity prices for the specific month.
+    """
     returnObj = []
     for(i, row) in df.iterrows():
         if row["Date"].month == month and row["Date"].year == year:
             returnObj.append(row[name])
     return returnObj
     
-def getRangeCommodityPrices(name, start_date, end_date):
+def get_range_commodity_prices(name: str, start_date: datetime.datetime, end_date: datetime.datetime):
+    """Returns a list of commodity prices for a specific date range in USD.
+
+    Args:
+        name: The name of the commodity.
+        start_date: The start date of the desired range as a datetime object.
+        end_date: The end date of the desired range as a datetime object.
+
+    Returns:
+        A list of commodity prices for the specific date range.
+    """
     returnObj = []
     for(i, row) in df.iterrows():
         if row["Date"] >= start_date and row["Date"] <= end_date:
             if(not pd.isnull(row[name])):
                 returnObj.append(row[name])
     return returnObj
-

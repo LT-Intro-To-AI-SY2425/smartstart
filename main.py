@@ -5,8 +5,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import warnings
 from google import genai
-import warnings
-from functions import getDateCommodityPrice
+from functions import get_available_dates, get_date_commodity_price
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
@@ -16,13 +15,21 @@ if not api_key:
     raise ValueError("Please set the GENAI_API_KEY environment variable")
 
 client = genai.Client(api_key=api_key)
+conversation = []
 MODEL = "gemini-2.0-flash"
 PREPROMPT = (
-    "Never make up your own data - only get information from the functions. If the user asks for a commodity price for a certain year but does not specify a month or day, automatically assume the first day of the year. If the user asks for a commodity price for a certain month but does not specify a day, automatically assume the first day of the month. If you cannot find the price of a commodity for a certain date, automatically move to the next date until you find a price."
+    "You are a helpful economic impact chatbot for the SmartStart organization."
+    "You can provide the price of a commodity for a specific date, month, or year."
+    "You have access to date ranges from early 2000 to late 2023."
+    "Never make up your own data - only get information from the functions."
+    "If the user asks for a commodity price for a certain year but does not specify a month or day, automatically assume the first day of the year."
+    "If the user asks for a commodity price for a certain month but does not specify a day, automatically assume the first day of the month."
+    "If you cannot find the price of a commodity for a certain date, suggest them the closest relavent date."
+    "If the user does not ask loosely about commodities, economic impacts/analysis/the market, your purpose and capabilities, or anything similar, respond with 'I'm sorry, I cannot help with that.' and redirect them to the purpose of the chatbot."
 )
 
 app = Flask(__name__)
-CORS(app) 
+CORS(app)
 
 def generate_gemini_response(conversation):
     """
@@ -38,22 +45,20 @@ def generate_gemini_response(conversation):
         contents=full_conversation,
         config={
             # Python functions to be used as tools in the model
-            'tools': [getDateCommodityPrice],
+            'tools': [get_available_dates, get_date_commodity_price],
         }
     )
     return response.text
 
 def run_cli_chat():
     """Interactive CLI chat mode."""
-    conversation = []
-    if PREPROMPT:
-        conversation.append({"role": "system", "text": PREPROMPT})
     try:
         while True:
             prompt = input("> ")
             conversation.append({"role": "user", "text": prompt})
             response = generate_gemini_response(conversation)
-            print(f"{response}\n")
+            print(response)
+            # Append assistant response to conversation for context
             conversation.append({"role": "assistant", "text": response})
     except KeyboardInterrupt:
         pass
@@ -75,13 +80,15 @@ def chat_endpoint():
 
     try:
         response_text = generate_gemini_response(conversation)
-        # Append the assistant's response to conversation (if desired)
         conversation.append({"role": "assistant", "text": response_text})
         return jsonify({"response_text": response_text})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
+    # Initialize the conversation with the preprompt
+    if PREPROMPT:
+        conversation.append({"role": "system", "text": PREPROMPT})
     # If a command-line argument 'cli' is passed, run interactive chat
     if len(sys.argv) > 1 and sys.argv[1].lower() == "cli":
         run_cli_chat()
