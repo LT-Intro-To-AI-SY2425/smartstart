@@ -44,6 +44,14 @@ def get_available_dates(name: str):
     available_dates = df.loc[~df[name].isnull(), "Date"].unique()
     return sorted(list(available_dates))
 
+def get_available_commotities():
+    """Returns a list of all available commodities in the dataset.
+
+    Returns:
+        A list of all available commodities.
+    """
+    return [col.lower() for col in df.columns[1:]]
+
 def get_date_commodity_price(name: str, year: int, month: int, day: int):
     """Returns the price of a commodity at a specific date in USD.
 

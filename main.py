@@ -41,7 +41,7 @@ def generate_gemini_response(conversation):
         contents=full_conversation,
         config={
             # Python functions to be used as tools in the model
-            'tools': [get_available_dates, get_closest_date_commodity_price],
+            'tools': [get_available_dates, get_available_commotities, get_closest_date_commodity_price],
         }
     )
     return response.text
