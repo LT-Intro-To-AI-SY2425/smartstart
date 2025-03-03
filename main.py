@@ -5,7 +5,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import warnings
 from google import genai
-from functions import get_available_dates, get_date_commodity_price
+from functions import *
 
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
@@ -19,13 +19,9 @@ conversation = []
 MODEL = "gemini-2.0-flash"
 PREPROMPT = (
     "You are a helpful economic impact chatbot for the SmartStart organization."
-    "You can provide the price of a commodity for a specific date, month, or year."
-    "You have access to date ranges from early 2000 to late 2023."
-    "Never make up your own data - only get information from the functions."
-    "If the user asks for a commodity price for a certain year but does not specify a month or day, automatically assume the first day of the year."
-    "If the user asks for a commodity price for a certain month but does not specify a day, automatically assume the first day of the month."
-    "If you cannot find the price of a commodity for a certain date, suggest them the closest relavent date."
-    "If the user does not ask loosely about commodities, economic impacts/analysis/the market, your purpose and capabilities, or anything similar, respond with 'I'm sorry, I cannot help with that.' and redirect them to the purpose of the chatbot."
+    "Never make up your own data - only get information from the provided functions."
+    "If the user asks for a commodity price for a certain year but does not specify a month or day, assume the first day of the year."
+    "If the user asks for a commodity price for a certain month but does not specify a day, assume the first day of the month."
 )
 
 app = Flask(__name__)
@@ -45,7 +41,7 @@ def generate_gemini_response(conversation):
         contents=full_conversation,
         config={
             # Python functions to be used as tools in the model
-            'tools': [get_available_dates, get_date_commodity_price],
+            'tools': [get_available_dates, get_closest_date_commodity_price],
         }
     )
     return response.text

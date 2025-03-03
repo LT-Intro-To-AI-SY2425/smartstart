@@ -13,7 +13,7 @@ dtypes = {
     "LOW SULPHUR GAS OIL": "float64",
     "LIVE CATTLE": "float64",
     "SOYBEAN OIL": "float64",
-    "ALUMINIUM": "float64",
+    "ALUMINUM": "float64",
     "SOYBEAN MEAL": "float64",
     "ZINC": "float64",
     "ULS DIESEL": "float64",
@@ -97,3 +97,28 @@ def get_range_commodity_prices(name: str, start_date: datetime.datetime, end_dat
             if(not pd.isnull(row[name])):
                 returnObj.append(row[name])
     return returnObj
+
+def get_closest_date_commodity_price(name: str, year: int, month: int, day: int):
+    """
+    Returns the commodity price for the closest available date to the specified date.
+    
+    Args:
+        name: The name of the commodity.
+        year: The year of the desired date as YYYY.
+        month: The month of the desired date as MM.
+        day: The day of the desired date as DD.
+        
+    Returns:
+        A tuple (closest_date, price) where closest_date is an ISO-formatted string of the found date,
+        or (None, None) if no data is available.
+    """
+    requested_date = datetime.datetime(year, month, day)
+    available_dates = get_available_dates(name)
+    
+    if not available_dates:
+        return (None, None)
+    
+    closest_date = min(available_dates, key=lambda d: abs(d - requested_date))
+    price = get_date_commodity_price(name, closest_date.year, closest_date.month, closest_date.day)
+    
+    return (closest_date.isoformat(), price)
