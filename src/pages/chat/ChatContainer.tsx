@@ -23,23 +23,27 @@ function Chat() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load userId from localStorage
+    const loadConversationHistory = async (userId: string) => {
+      try {
+        const response = await axios.get(
+          `http://127.0.0.1:5050/history/${userId}`,
+        );
+        const historicalMessages = response.data.conversation.map(
+          (msg: Message) => ({
+            ...msg,
+            isNew: false,
+          }),
+        );
+        setConversation(historicalMessages);
+      } catch (error) {
+        console.error("error loading conversation history:", error);
+      }
+    };
+
     const storedUserId = localStorage.getItem("chat_user_id");
     if (storedUserId) {
       setUserId(storedUserId);
-      // Load conversation history
-      axios
-        .get(`http://127.0.0.1:5050/history/${storedUserId}`)
-        .then((response) => {
-          // Set isNew to false for all historical messages
-          setConversation(
-            response.data.conversation.map((msg: Message) => ({
-              ...msg,
-              isNew: false,
-            })),
-          );
-        })
-        .catch((error) => console.error("Error loading history:", error));
+      loadConversationHistory(storedUserId);
     }
   }, []);
 
@@ -58,9 +62,9 @@ function Chat() {
       }
       setConversation((prev) => {
         const newConversation = [...prev];
-        // Remove the loading message
+
         newConversation.pop();
-        // Add the actual response
+
         newConversation.push({
           role: "assistant",
           text: response.data.response_text,
