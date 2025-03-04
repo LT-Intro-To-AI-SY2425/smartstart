@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Logo } from "../../components/Logo";
 
 interface Message {
   role: "user" | "assistant";
@@ -93,7 +94,8 @@ function Chat() {
     <div className="h-screen w-full bg-gray-50">
       {conversation.length === 0 ? (
         <div className="h-full flex flex-col justify-center items-center">
-          <h1 className="font-semibold text-gray-900 text-2xl sm:text-3xl text-center leading-[2.25rem] mb-7">
+          <Logo />
+          <h1 className="font-semibold text-gray-900 text-2xl sm:text-3xl text-center leading-[2.25rem] mb-7 mt-4">
             How can I help?
           </h1>
           <ChatInput
