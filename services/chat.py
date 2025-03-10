@@ -1,5 +1,5 @@
 from config import client, MODEL
-from functions import get_available_dates, get_available_commotities, get_closest_date_commodity_price
+from functions.commodities import get_available_dates, get_available_commotities, get_closest_date_commodity_price
 from models import db, Conversation, Message
 import uuid
 
