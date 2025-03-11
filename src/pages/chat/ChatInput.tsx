@@ -74,7 +74,7 @@ export function ChatInput({
       </form>
       <div className="flex flex-col justify-center items-center">
         <span className="text-gray-400 text-xs text-center mt-4">
-          SmartStart & CME Group 2025
+          SmartStart & CME Group 2025. Check important info.
         </span>
       </div>
     </div>

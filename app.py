@@ -1,3 +1,4 @@
+import logging
 from flask import Flask
 from flask_cors import CORS
 from models import db
@@ -6,6 +7,11 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
