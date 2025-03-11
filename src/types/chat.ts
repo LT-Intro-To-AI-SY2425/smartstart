@@ -1,5 +1,5 @@
 // function names as a union type
-export type FunctionName = 
+export type FunctionName =
   | "get_available_dates"
   | "get_available_commotities"
   | "get_closest_date_commodity_price"
