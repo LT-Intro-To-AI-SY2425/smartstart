@@ -1,6 +1,6 @@
 from config import client, MODEL
 from functions.commodities import get_available_dates, get_available_commotities, get_closest_date_commodity_price
-from functions.headlines import search_headlines_by_keyword, get_headlines_by_date_range, get_related_headlines
+from functions.headlines import search_headlines_by_keyword
 from models import db, Conversation, Message
 import uuid
 import logging
