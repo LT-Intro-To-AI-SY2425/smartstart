@@ -14,22 +14,33 @@ from fuzzywuzzy import fuzz
 from typing import List, Dict
 from datetime import datetime
 from sqlalchemy import func
+from functools import lru_cache
+import json
 
 logger = logging.getLogger(__name__)
 
-def search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> List[Dict]:
+def json_serializable_result(result):
+    return json.dumps(result, sort_keys=True)
+
+@lru_cache(maxsize=100)
+def cached_search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> str:
+    """Cached version of search_headlines_by_keyword. Returns JSON to ensure cacheability."""
+    results = search_headlines_by_keyword_uncached(keyword, min_similarity, limit)
+    return json_serializable_result(results)
+
+def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limit: int) -> List[Dict]:
     """Search headlines using fuzzy string matching. All parameters are required.
     
     Args:
         keyword: The search term to look for in headlines
-        min_similarity: Minimum similarity ratio (0-100) for fuzzy matching, default is 60
-        limit: Maximum number of results to return, default is 10
+        min_similarity: Minimum similarity ratio (0-100) for fuzzy matching
+        limit: Maximum number of results to return
         
     Returns:
         List of dicts containing headline text, date, similarity score, and link
     """
     try:
-        logger.info(f"searching headlines with keyword: {keyword}")
+        logger.info(f"Searching headlines with keyword: {keyword}")
         
         headlines = db.session.query(Headlines.Headline, Headlines.Date, Headlines.URL).order_by(Headlines.Date.desc()).all()
         
@@ -46,16 +57,17 @@ def search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -
                         'link': URL
                     })
         
-        # sort by similarity score and limit results
+        # Sort by similarity score and limit results
         matched_headlines.sort(key=lambda x: x['similarity'], reverse=True)
         results = matched_headlines[:limit]
         
-        logger.debug(f"found {len(results)} matching headlines for '{keyword}'")
+        logger.debug(f"Found {len(results)} matching headlines for '{keyword}'")
         return results
         
     except Exception as e:
-        logger.error(f"error searching headlines with keyword '{keyword}': {str(e)}")
+        logger.error(f"Error searching headlines with keyword '{keyword}': {str(e)}")
         raise
+
 
 
 # def get_headlines_by_date_range(start_date: str, end_date: str, limit: int, keyword: str, min_similarity: int) -> List[Dict]:
