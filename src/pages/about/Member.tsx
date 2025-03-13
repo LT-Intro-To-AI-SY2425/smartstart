@@ -1,4 +1,5 @@
 import React from "react";
+
 const Member = (props: { image: string; name: string; position: string }) => (
   <li className="flex items-center gap-4">
     <img alt="" src={props.image} className="size-12 rounded-full" />
@@ -8,4 +9,5 @@ const Member = (props: { image: string; name: string; position: string }) => (
     </div>
   </li>
 );
+
 export default Member;

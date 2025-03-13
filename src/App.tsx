@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import { ChatContainer } from "./pages/chat/ChatContainer";
 import AboutPage from "./pages/about/AboutPage";
-import '@fontsource-variable/inter';
+import "@fontsource-variable/inter";
 
 function NoMatch() {
   return (
