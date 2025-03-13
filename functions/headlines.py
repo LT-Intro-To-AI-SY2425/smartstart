@@ -35,6 +35,8 @@ def search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -
     Returns:
         List of dicts containing headline text, date, similarity score, and link
         """
+    logger.info(f"Searching headlines with keyword: {keyword}")
+
     return cached_search_headlines_by_keyword(keyword, min_similarity, limit)
 
 @lru_cache(maxsize=100)
@@ -64,7 +66,7 @@ def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limi
         List of dicts containing headline text, date, similarity score, and link
     """
     try:
-        logger.info(f"Searching headlines with keyword: {keyword}")
+        logger.info(f"Searching headlines from databased with keyword: {keyword}")
         
         headlines = db.session.query(Headlines.Headline, Headlines.Date, Headlines.URL).order_by(Headlines.Date.desc()).all()
         
