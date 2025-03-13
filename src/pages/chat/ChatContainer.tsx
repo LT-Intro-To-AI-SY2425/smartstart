@@ -22,10 +22,7 @@ import {
 import { Button } from "../../components/Button";
 import Avatar from "boring-avatars";
 
-
 function Chat() {
-  const [clearChatOpen, setClearChatOpen] = useState(false);
-
   const {
     conversation,
     userId,
@@ -35,6 +32,8 @@ function Chat() {
     handleSubmit,
     isLoading,
     handleClearChat,
+    clearChatOpen,
+    setClearChatOpen,
   } = useChat();
 
   return (

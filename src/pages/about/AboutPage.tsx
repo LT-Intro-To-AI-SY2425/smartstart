@@ -79,35 +79,49 @@ function Mentors() {
         <li>
           <div className="flex gap-4">
             <img
-              alt="andrew anderson"
+              alt="Andy Anderson"
               src="https://westernfinance.org/wp-content/uploads/speaker-3-v2.jpg"
               className="h-18 rounded-full"
             />
             <Heading className="sm:!text-4xl my-auto">Andy Anderson</Heading>
           </div>
           <p className="mt-6 max-w-lg text-sm/6 text-gray-500">
-            andrew anderson Lorem ipsum dolor sit amet, consectetur adipiscing
-            elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-            aliqua. Ut enim adLorem ipsum dolor sit amet, consectetur adipiscing
-            elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-            aliqua. Ut enim ad
+            I have been working in IT for 20+ years. Throughout those years, I
+            have mainly supported one application called Oracle Hyperion/Essbase
+            which is traditionally used in Finance departments at companies for
+            reporting, forecasting, and budgeting. However, in my work on that
+            application, I have worked with many other tools and technologies
+            that are used along side it. Some examples are:
+            Windows/Unix/Mainframe platforms; multiple programming languages
+            like C++, Cobol, Visual Basic, Java; security; automation and
+            scheduling tools; performance tuning; database technologies
+            (Oracle/SQL Server) and others. I am an expert in Microsoft Excel.
+            And I have worked as a full-time employee and a consultant in the
+            company I started. Additionally, I have worked in many different
+            industries including: retail, pharmaceutical, transportation,
+            defense, and manufacturing. I have two kids (17 yr old girl, 15 yr
+            old boy), and have been married for 24 years. I am relatively handy
+            around the house with repairing things, and have designed and built
+            an outdoor playset; two hoists in our garage for Jeep Wrangler doors
+            and a hard-top; and I also replaced the shocks/struts on our
+            vehicles as well as the brakes, calipers, and rotors. But I
+            don&apos;t do plumbing :) I enjoy financial discussions and
+            investing.
           </p>
         </li>
         <li>
           <div className="flex gap-4">
             <img
-              alt="heidie heiderson"
+              alt="Heidi Salgado"
               src="https://westernfinance.org/wp-content/uploads/speaker-3-v2.jpg"
               className="h-18 rounded-full"
             />
-            <Heading className="sm:!text-4xl my-auto">heidie heiderson</Heading>
+            <Heading className="sm:!text-4xl my-auto">Heidi Salgado</Heading>
           </div>
           <p className="mt-6 max-w-lg text-sm/6 text-gray-500">
-            heide himer Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim adLorem ipsum dolor sit amet, consectetur adipiscing elit,
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            Ut enim ad
+            Hi! I am a Platform Engineer at CME Group. Some of my interests
+            include Computer Science, Game Design & Development, and Web
+            Development
           </p>
         </li>
       </ul>

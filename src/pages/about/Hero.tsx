@@ -23,16 +23,16 @@ export default function AboutHero() {
       </div>
       <h1 className="text-6xl font-bold text-white z-10">
         Powerful{" "}
-        <span className="bg-gradient-to-r from-blue-200 to-cyan-200 bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-blue-200 to-sky-200 bg-clip-text text-transparent">
           Market Insights
         </span>
         , Simplified
       </h1>
-      <p className="text-2xl inter text-white z-10">
+      <p className="text-2xl text-white z-10">
         SmartStart is your AI-Powered Commodity Analyst
       </p>
       <NavLink to="/chat">
-        <Button color="white" className="z-10">
+        <Button color="white" className="z-10 cursor-pointer">
           Try a demo
         </Button>
       </NavLink>

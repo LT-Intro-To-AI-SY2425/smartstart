@@ -29,7 +29,7 @@ def generate_gemini_response(conversation):
                 get_available_dates, 
                 get_available_commotities, 
                 get_closest_date_commodity_price,
-                search_headlines_by_keyword,
+                search_headlines_by_keyword
             ],
         }
     )

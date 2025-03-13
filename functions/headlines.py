@@ -22,9 +22,33 @@ logger = logging.getLogger(__name__)
 def json_serializable_result(result):
     return json.dumps(result, sort_keys=True)
 
+# ai fuckery below!!!! so sorry
+
+def search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> str:
+    """Cached version of search_headlines_by_keyword. Search headlines using fuzzy string matching. All parameters are required. Returns JSON to ensure cacheability.
+    
+    Args:
+        keyword: The search term to look for in headlines
+        min_similarity: Minimum similarity ratio (0-100) for fuzzy matching
+        limit: Maximum number of results to return
+        
+    Returns:
+        List of dicts containing headline text, date, similarity score, and link
+        """
+    return cached_search_headlines_by_keyword(keyword, min_similarity, limit)
+
 @lru_cache(maxsize=100)
 def cached_search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> str:
-    """Cached version of search_headlines_by_keyword. Returns JSON to ensure cacheability."""
+    """Cached version of search_headlines_by_keyword. Search headlines using fuzzy string matching. All parameters are required. Returns JSON to ensure cacheability.
+    
+    Args:
+        keyword: The search term to look for in headlines
+        min_similarity: Minimum similarity ratio (0-100) for fuzzy matching
+        limit: Maximum number of results to return
+        
+    Returns:
+        List of dicts containing headline text, date, similarity score, and link
+        """
     results = search_headlines_by_keyword_uncached(keyword, min_similarity, limit)
     return json_serializable_result(results)
 
