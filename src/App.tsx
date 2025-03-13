@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import { ChatContainer } from "./pages/chat/ChatContainer";
+import AboutPage from "./pages/about/AboutPage";
 
 function NoMatch() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
     <>
       <Routes>
         <Route index element={<ChatContainer />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="*" element={<NoMatch />} />
       </Routes>
     </>

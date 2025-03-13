@@ -24,6 +24,7 @@ import {
 } from "../../components/Dialog";
 import { Button } from "../../components/Button";
 import { ChatResponse, FunctionCall, FunctionName } from "../../types/chat";
+import "@fontsource/inter/600.css";
 
 interface Message {
   role: "user" | "assistant";
@@ -160,7 +161,7 @@ function Chat() {
         <>
           <div className="h-full flex flex-col justify-center items-center">
             <Logo />
-            <h1 className="font-semibold text-gray-900 text-2xl sm:text-3xl text-center leading-[2.25rem] mb-7 mt-4">
+            <h1 className="font-semibold text-gray-900 text-2xl sm:text-3xl text-center leading-[2.25rem] mb-7 mt-4 inter-bold">
               How can I help?
             </h1>
             <ChatInput
@@ -174,15 +175,19 @@ function Chat() {
       ) : (
         <div className="h-full flex flex-col">
           <div className="flex items-center justify-between p-3 border-gray-200">
-            <h2 className="text-lg font-medium text-gray-900 truncate max-w-[80%]">
-              {title && (
+            <div className="flex items-center gap-3">
+            <img src="/smartstart-favicon.svg" alt="logo" className="h-8 w-8" />
+            <h2 className="text-lg font-medium text-gray-900 truncate max-w-[90%] inter-bold">
+              {/* {title && (
                 <TypingText
                   text={title}
                   speed={100}
                   className="font-semibold text-gray-600 text-lg"
                 />
-              )}
+              )} */}
+              {title}
             </h2>
+            </div>
             <div className="flex items-center gap-2">
               {userId && (
                 <TypingText
@@ -205,7 +210,7 @@ function Chat() {
               </Dialog>
               <Dropdown>
                 <DropdownButton as="button">
-                  <Avatar size={32} name={userId || "default"} variant="beam" />
+                  <Avatar size={32} name={userId || "default"} variant="beam" className="hover:brightness-80 transition duration-100"/>
                 </DropdownButton>
                 <DropdownMenu className="min-w-64" anchor="bottom end">
                   <DropdownItem to="/about">
