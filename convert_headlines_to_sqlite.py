@@ -21,7 +21,7 @@ conn.execute('BEGIN TRANSACTION')
 
 try:
     # count total rows first for progress bar
-    total_rows = sum(1 for _ in open('data_sources/massive_headlines.csv', 'r')) - 1  # subtract header
+    total_rows = sum(1 for _ in open('data_sources/massive_headlines.csv', 'r', encoding='utf-8')) - 1  # subtract header
     print(f"total rows to process: {total_rows:,}")
 
     # process in chunks with progress bar
