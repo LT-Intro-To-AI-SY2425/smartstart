@@ -19,8 +19,8 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route index element={<ChatContainer />} />
-        <Route path="/about" element={<AboutPage />} />
+        <Route index element={<AboutPage />} />
+        <Route path="/chat" element={<ChatContainer />} />
         <Route path="*" element={<NoMatch />} />
       </Routes>
     </>

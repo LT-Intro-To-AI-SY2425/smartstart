@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "../../components/Button";
 import Waves from "../../components/Waves";
 import { Mark } from "../../components/Logo";
+import { NavLink } from "react-router";
 
 export default function AboutHero() {
   return (
@@ -30,9 +31,11 @@ export default function AboutHero() {
       <p className="text-2xl inter text-white z-10">
         SmartStart is your AI-Powered Commodity Analyst
       </p>
-      <Button color="white" className="z-10">
-        Try a demo
-      </Button>
+      <NavLink to="/chat">
+        <Button color="white" className="z-10">
+          Try a demo
+        </Button>
+      </NavLink>
     </div>
   );
 }
