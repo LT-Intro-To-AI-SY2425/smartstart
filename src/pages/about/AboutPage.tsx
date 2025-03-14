@@ -156,9 +156,8 @@ function QualityControl() {
     <Container className="mt-25">
     <Heading as="h1">Data you can trust</Heading>
     <Lead className="mt-6 max-w-3xl">Built-in quality control to ensure accuracy</Lead>
-    <section className="mt-10 grid items-center grid-cols-1 lg:grid-cols-2 lg:gap-12">
+    <section className="mt-5 grid items-center grid-cols-1 lg:grid-cols-2 lg:gap-12">
       <div className="max-w-lg">
-        <h2 className="text-2xl font-medium tracking-tight">Our mission</h2>
         <p className="mt-6 text-sm/6 text-gray-600">
         SmartStart easily allows users to trace the source of the data used to ensure accuracy. Automatic function logs provide a clear audit trail of the commodity prices and news headlines have source links to original articles.
         </p>
