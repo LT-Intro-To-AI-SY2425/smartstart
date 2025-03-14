@@ -89,7 +89,7 @@ const Header = () => (
 function Mentors() {
   return (
     <Container className="mt-32">
-      <Subheading>Menotorship</Subheading>
+      <Subheading>Mentorship</Subheading>
       <Heading as="h3" className="mt-2">
         CME Group Mentorship
       </Heading>
