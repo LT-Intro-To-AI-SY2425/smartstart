@@ -4,19 +4,34 @@ import { Container } from "../../components/marketing/Container";
 import { Heading, Lead, Subheading } from "../../components/marketing/Text";
 import Member from "./Member";
 import commodity_price_image from "../../assets/get_date_commodity_price.svg";
+import drew from "../../assets/members/drew.webp";
+import myles from "../../assets/members/myles.webp";
+import ethan from "../../assets/members/ethan.webp";
+import zach from "../../assets/members/zach.webp";
+import camden from "../../assets/members/camden.webp";
 
 const Header = () => (
   <Container className="mt-25">
     <Heading as="h1">Cutting-Edge Market Solutions</Heading>
-    <Lead className="mt-6 max-w-3xl">Unlock the future of historical commodity analysis</Lead>
+    <Lead className="mt-6 max-w-3xl">
+      Unlock the future of historical commodity analysis
+    </Lead>
     <section className="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
       <div className="max-w-lg">
         <h2 className="text-2xl font-medium tracking-tight">Our mission</h2>
         <p className="mt-6 text-sm/6 text-gray-600">
-        SmartStart is a platform that provides historical commodity data and analysis to help users make informed decisions. With access to millions of news headlines, you can gain deeper insight into how world events impact the market. Our goal is to provide a comprehensive solution for investors, researchers, and students to analyze and understand the market.
+          SmartStart is a platform that provides historical commodity data and
+          analysis to help users make informed decisions. With access to
+          millions of news headlines, you can gain deeper insight into how world
+          events impact the market. Our goal is to provide a comprehensive
+          solution for investors, researchers, and students to analyze and
+          understand the market.
         </p>
         <p className="mt-8 text-sm/6 text-gray-600">
-        To achieve this, we have partnered with CME Group to provide mentorship and guidance to our team. Our mentors have years of experience in the industry and are dedicated to helping us succeed. We're excited to share our platform with you.
+          To achieve this, we have partnered with CME Group to provide
+          mentorship and guidance to our team. Our mentors have years of
+          experience in the industry and are dedicated to helping us succeed.
+          We're excited to share our platform with you.
         </p>
       </div>
       <div className="max-lg:mt-16 lg:col-span-1">
@@ -55,7 +70,8 @@ function Mentors() {
         CME Group Mentorship
       </Heading>
       <Lead className="mt-6 max-w-3xl">
-        These industry professionals have graciously offered their time to guide and support our team.
+        These industry professionals have graciously offered their time to guide
+        and support our team.
       </Lead>
       <Subheading as="h3" className="mt-24">
         mentors
@@ -126,7 +142,8 @@ function Team() {
         Built by experienced students
       </Heading>
       <Lead className="mt-6 max-w-3xl">
-      Our team is made up of students from various backgrounds and experiences, all working together to deliver innovative solutions. 
+        Our team is made up of students from various backgrounds and
+        experiences, all working together to deliver innovative solutions.
       </Lead>
       <Subheading as="h3" className="mt-24">
         The Team
@@ -136,16 +153,44 @@ function Team() {
         role="list"
         className="mx-auto mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
       >
-        {new Array(9).fill(null).map((_, i) => (
-          <Member
-            key={i}
-            name="andy anderson"
-            position="king"
-            image={
-              "https://westernfinance.org/wp-content/uploads/speaker-3-v2.jpg"
-            }
-          />
-        ))}
+        <Member
+          name="Zach Buchar"
+          position="Project Manager & Development"
+          image={zach}
+        />
+        <Member
+          name="Camden Rush"
+          position="Communications & Development"
+          image={camden}
+        />
+        <Member
+          name="Myles Vendel"
+          position="Timeline Manager & Development"
+          image={myles}
+        />
+        <Member
+          name="Thomas Burgeson"
+          position="Testing/Feedback Lead"
+          image={
+            "https://westernfinance.org/wp-content/uploads/speaker-3-v2.jpg"
+          }
+        />
+        <Member name="Ethan Hui" position="Research Lead" image={ethan} />
+        <Member
+          name="Lynn Ogi"
+          position="Data Analyst"
+          image={
+            "https://westernfinance.org/wp-content/uploads/speaker-3-v2.jpg"
+          }
+        />
+        <Member
+          name="Aden Mei"
+          position="Branding Manager"
+          image={
+            "https://westernfinance.org/wp-content/uploads/speaker-3-v2.jpg"
+          }
+        />
+        <Member name="Drew Stephens" position="Design Lead" image={drew} />
       </ul>
     </Container>
   );
@@ -154,27 +199,36 @@ function Team() {
 function QualityControl() {
   return (
     <Container className="mt-25">
-    <Heading as="h1">Data you can trust</Heading>
-    <Lead className="mt-6 max-w-3xl">Built-in quality control to ensure accuracy</Lead>
-    <section className="mt-5 grid items-center grid-cols-1 lg:grid-cols-2 lg:gap-12">
-      <div className="max-w-lg">
-        <p className="mt-6 text-sm/6 text-gray-600">
-        SmartStart easily allows users to trace the source of the data used to ensure accuracy. Automatic function logs provide a clear audit trail of the commodity prices and news headlines have source links to original articles.
-        </p>
-        <p className="mt-8 text-sm/6 text-gray-600">
-        Our platform is designed to provide transparency and accountability to our users. We understand the importance of reliable data and have designed our platform to meet the highest standards of quality control.
-        </p>
-      </div>
-      <div className="max-lg:mt-16 lg:col-span-1">
-        <img
-          src={commodity_price_image}
-          alt="commodity prices"
-          className="w-full h-90"/>
-      </div>
-    </section>
-  </Container>
-  )
-  }
+      <Heading as="h1">Data you can trust</Heading>
+      <Lead className="mt-6 max-w-3xl">
+        Built-in quality control to ensure accuracy
+      </Lead>
+      <section className="mt-5 grid items-center grid-cols-1 lg:grid-cols-2 lg:gap-12">
+        <div className="max-w-lg">
+          <p className="mt-6 text-sm/6 text-gray-600">
+            SmartStart easily allows users to trace the source of the data used
+            to ensure accuracy. Automatic function logs provide a clear audit
+            trail of the commodity prices and news headlines have source links
+            to original articles.
+          </p>
+          <p className="mt-8 text-sm/6 text-gray-600">
+            Our platform is designed to provide transparency and accountability
+            to our users. We understand the importance of reliable data and have
+            designed our platform to meet the highest standards of quality
+            control.
+          </p>
+        </div>
+        <div className="max-lg:mt-16 lg:col-span-1">
+          <img
+            src={commodity_price_image}
+            alt="commodity prices"
+            className="w-full h-90"
+          />
+        </div>
+      </section>
+    </Container>
+  );
+}
 
 export default function AboutPage() {
   return (
