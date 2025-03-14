@@ -3,9 +3,10 @@ import AboutHero from "./Hero";
 import { Container } from "../../components/marketing/Container";
 import { Heading, Lead, Subheading } from "../../components/marketing/Text";
 import Member from "./Member";
+import commodity_price_image from "../../assets/get_date_commodity_price.svg";
 
 const Header = () => (
-  <Container className="mt-16">
+  <Container className="mt-25">
     <Heading as="h1">Cutting-Edge Market Solutions</Heading>
     <Lead className="mt-6 max-w-3xl">Unlock the future of historical commodity analysis</Lead>
     <section className="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
@@ -150,11 +151,38 @@ function Team() {
   );
 }
 
+function QualityControl() {
+  return (
+    <Container className="mt-25">
+    <Heading as="h1">Data you can trust</Heading>
+    <Lead className="mt-6 max-w-3xl">Built-in quality control to ensure accuracy</Lead>
+    <section className="mt-10 grid items-center grid-cols-1 lg:grid-cols-2 lg:gap-12">
+      <div className="max-w-lg">
+        <h2 className="text-2xl font-medium tracking-tight">Our mission</h2>
+        <p className="mt-6 text-sm/6 text-gray-600">
+        SmartStart easily allows users to trace the source of the data used to ensure accuracy. Automatic function logs provide a clear audit trail of the commodity prices and news headlines have source links to original articles.
+        </p>
+        <p className="mt-8 text-sm/6 text-gray-600">
+        Our platform is designed to provide transparency and accountability to our users. We understand the importance of reliable data and have designed our platform to meet the highest standards of quality control.
+        </p>
+      </div>
+      <div className="max-lg:mt-16 lg:col-span-1">
+        <img
+          src={commodity_price_image}
+          alt="commodity prices"
+          className="w-full h-90"/>
+      </div>
+    </section>
+  </Container>
+  )
+  }
+
 export default function AboutPage() {
   return (
     <main className="overflow-hidden">
       <AboutHero />
       <Header />
+      <QualityControl />
       <Team />
       <Mentors />
     </main>
