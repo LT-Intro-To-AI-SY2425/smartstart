@@ -6,30 +6,24 @@ import Member from "./Member";
 
 const Header = () => (
   <Container className="mt-16">
-    <Heading as="h1">Large heading</Heading>
-    <Lead className="mt-6 max-w-3xl">small heading</Lead>
+    <Heading as="h1">Cutting-Edge Market Solutions</Heading>
+    <Lead className="mt-6 max-w-3xl">Unlock the future of historical commodity analysis</Lead>
     <section className="mt-16 grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
       <div className="max-w-lg">
         <h2 className="text-2xl font-medium tracking-tight">Our mission</h2>
         <p className="mt-6 text-sm/6 text-gray-600">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-          adLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+        SmartStart is a platform that provides historical commodity data and analysis to help users make informed decisions. With access to millions of news headlines, you can gain deeper insight into how world events impact the market. Our goal is to provide a comprehensive solution for investors, researchers, and students to analyze and understand the market.
         </p>
         <p className="mt-8 text-sm/6 text-gray-600">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-          adLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+        To achieve this, we have partnered with CME Group to provide mentorship and guidance to our team. Our mentors have years of experience in the industry and are dedicated to helping us succeed. We're excited to share our platform with you.
         </p>
       </div>
       <div className="max-lg:mt-16 lg:col-span-1">
         <Subheading>stats</Subheading>
         <hr className="mt-6 border-t border-gray-200" />
-        <dl className="mt-6 grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+        <dl className="mt-6 grid grid-cols-1 gap-x-8 gap-y-8 sm:grid-cols-2">
           <div className="flex flex-col gap-y-2 border-b border-dotted border-gray-200 pb-4">
-            <dt className="text-sm/6 text-gray-600">commidities</dt>
+            <dt className="text-sm/6 text-gray-600">commodities</dt>
             <dd className="order-first text-6xl font-medium tracking-tight">
               14
             </dd>
@@ -37,19 +31,13 @@ const Header = () => (
           <div className="flex flex-col gap-y-2 border-b border-dotted border-gray-200 pb-4">
             <dt className="text-sm/6 text-gray-600">dates</dt>
             <dd className="order-first text-6xl font-medium tracking-tight">
-              10000000
+              6,000+
             </dd>
           </div>
           <div className="flex flex-col gap-y-2 max-sm:border-b max-sm:border-dotted max-sm:border-gray-200 max-sm:pb-4">
             <dt className="text-sm/6 text-gray-600">headlines</dt>
             <dd className="order-first text-6xl font-medium tracking-tight">
-              4 milon
-            </dd>
-          </div>
-          <div className="flex flex-col gap-y-2">
-            <dt className="text-sm/6 text-gray-600">idk</dt>
-            <dd className="order-first text-6xl font-medium tracking-tight">
-              idk
+              4.5 million
             </dd>
           </div>
         </dl>
@@ -61,12 +49,12 @@ const Header = () => (
 function Mentors() {
   return (
     <Container className="mt-32">
-      <Subheading>Menotors</Subheading>
+      <Subheading>Menotorship</Subheading>
       <Heading as="h3" className="mt-2">
-        mentors from cme
+        CME Group Mentorship
       </Heading>
       <Lead className="mt-6 max-w-3xl">
-        something like cme profesonals who graciosuly provided their time
+        These industry professionals have graciously offered their time to guide and support our team.
       </Lead>
       <Subheading as="h3" className="mt-24">
         mentors
@@ -134,13 +122,13 @@ function Team() {
     <Container className="mt-32">
       <Subheading>Meet the team</Subheading>
       <Heading as="h3" className="mt-2">
-        Built by the best.
+        Built by experienced students
       </Heading>
       <Lead className="mt-6 max-w-3xl">
-        Built in coloaborzation with cme group
+      Our team is made up of students from various backgrounds and experiences, all working together to deliver innovative solutions. 
       </Lead>
       <Subheading as="h3" className="mt-24">
-        The team
+        The Team
       </Subheading>
       <hr className="mt-6 border-t border-gray-200" />
       <ul
