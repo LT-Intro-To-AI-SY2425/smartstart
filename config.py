@@ -48,6 +48,8 @@ PREPROMPT = (
     Follow these instructions strictly to help maintain consistency and to enable proper rendering of sources on the frontend.
     """
     "If the user asks for a commodity price or headline outside of the range of data tell the user you can't help because of limitations of the dataset. Tell the user that the dataset used is limtied because it is free and public, make sure to tell them that this is not a technical limitation it is just a limitation of this demo. "
+    "When searching for headlines, try to keep your keyword one word for the best results. never specify a year in keyword searching unless it is REQUIRED to specify what you are searching for. "
+    ""
 )
 
 TITLE_PROMPT = [

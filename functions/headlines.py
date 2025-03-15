@@ -13,49 +13,37 @@ from models import db, Headlines
 from fuzzywuzzy import fuzz
 from typing import List, Dict
 from datetime import datetime
-from sqlalchemy import func
+from sqlalchemy import func, text
 from functools import lru_cache
 import json
+from rapidfuzz import process, fuzz
 
 logger = logging.getLogger(__name__)
 
 def json_serializable_result(result):
-    return json.dumps(result, sort_keys=True)
+    """converts the result to JSON serializable format, returning a python object (not a string)"""
+    return result
 
 # ai fuckery below!!!! so sorry
 
-def search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> str:
-    """Cached version of search_headlines_by_keyword. Search headlines using fuzzy string matching. All parameters are required. Returns JSON to ensure cacheability.
+def search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> List[Dict]:
+    """Cached version of search_headlines_by_keyword. Search headlines using fuzzy string matching. All parameters are required. Returns a list of dicts.
     
     Args:
-        keyword: The search term to look for in headlines
-        min_similarity: Minimum similarity ratio (0-100) for fuzzy matching
-        limit: Maximum number of results to return
+        keyword: the search term to look for in headlines
+        min_similarity: minimum similarity ratio (0-100) for fuzzy matching
+        limit: maximum number of results to return
         
     Returns:
-        List of dicts containing headline text, date, similarity score, and link
-        """
-    logger.info(f"Searching headlines with keyword: {keyword}")
+        list of dicts containing headline text, date, similarity score, and link
+    """
+    logger.info(f"searching headlines with keyword: {keyword}")
 
     return cached_search_headlines_by_keyword(keyword, min_similarity, limit)
 
 @lru_cache(maxsize=100)
-def cached_search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> str:
-    """Cached version of search_headlines_by_keyword. Search headlines using fuzzy string matching. All parameters are required. Returns JSON to ensure cacheability.
-    
-    Args:
-        keyword: The search term to look for in headlines
-        min_similarity: Minimum similarity ratio (0-100) for fuzzy matching
-        limit: Maximum number of results to return
-        
-    Returns:
-        List of dicts containing headline text, date, similarity score, and link
-        """
-    results = search_headlines_by_keyword_uncached(keyword, min_similarity, limit)
-    return json_serializable_result(results)
-
-def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limit: int) -> List[Dict]:
-    """Search headlines using fuzzy string matching. All parameters are required.
+def cached_search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> List[Dict]:
+    """Cached version of search_headlines_by_keyword. Uses cached data for faster repeated access.
     
     Args:
         keyword: The search term to look for in headlines
@@ -65,34 +53,69 @@ def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limi
     Returns:
         List of dicts containing headline text, date, similarity score, and link
     """
+    results = search_headlines_by_keyword_uncached(keyword, min_similarity, limit)
+    return results
+
+def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limit: int) -> List[Dict]:
+    """Search headlines using fuzzy string matching. All parameters are required.
+    
+    Args:
+        keyword: the search term to look for in headlines, comma seperated keywords work
+        min_similarity: minimum similarity ratio (0-100) for fuzzy matching
+        limit: maximum number of results to return
+        
+    Returns:
+        list of dicts containing headline text, date, similarity score, and link
+    """    
     try:
-        logger.info(f"Searching headlines from databased with keyword: {keyword}")
-        
-        headlines = db.session.query(Headlines.Headline, Headlines.Date, Headlines.URL).order_by(Headlines.Date.desc()).all()
-        
-        # calculate similarity scores and filter
-        matched_headlines = []
-        for headline, date, URL in headlines:
-            if headline is not None:
-                ratio = fuzz.partial_ratio(keyword.lower(), headline.lower())
-                if ratio >= min_similarity:
-                    matched_headlines.append({
-                        'headline': headline,
-                        'date': date.isoformat() if isinstance(date, datetime) else date,
-                        'similarity': ratio,
-                        'link': URL
-                    })
-        
-        # Sort by similarity score and limit results
-        matched_headlines.sort(key=lambda x: x['similarity'], reverse=True)
-        results = matched_headlines[:limit]
-        
+        logger.info(f"searching headlines from database with keywords: {keyword}")
+
+        # da
+        keywords = [k.strip() for k in keyword.split(',')]
+
+        # more da
+        like_conditions = [f"LOWER(Headline) LIKE LOWER(:keyword{i})" for i in range(len(keywords))]
+
+        # more more da
+        query_conditions = " OR ".join(like_conditions)
+
+        query_params = {f"keyword{i}": f"%{keywords[i]}%" for i in range(len(keywords))}
+
+        # database query:	O(N)	     ->  O(N) (but likely O(log N) with indexing)
+        # fuzzy matching:	O(N * m)     ->  O(limit * 5 * m)
+        # sorting	    :   O(N log N)   ->  O(limit log limit)
+        query = text(f"""
+            SELECT Headline, Date, URL FROM headlines
+            WHERE {query_conditions}
+            ORDER BY Date DESC
+            LIMIT :limit
+        """)
+
+        fetched_headlines = db.session.execute(query, {**query_params, 'limit': limit * 5}).fetchall()
+
+        if not fetched_headlines:
+            return []
+
+        headlines_list = [(row[0], row[1], row[2]) for row in fetched_headlines]
+
+        matched_headlines = [
+            {'headline': h, 'date': d.isoformat() if isinstance(d, datetime) else d, 'similarity': s, 'link': u}
+            for h, d, u, s in (
+                (h, d, u, fuzz.partial_ratio(keyword.lower(), h.lower())) for h, d, u in headlines_list
+            )
+            if s >= min_similarity
+        ]
+
+        results = sorted(matched_headlines, key=lambda x: x['similarity'], reverse=True)[:limit]
+
         logger.debug(f"Found {len(results)} matching headlines for '{keyword}'")
         return results
-        
+
     except Exception as e:
-        logger.error(f"Error searching headlines with keyword '{keyword}': {str(e)}")
+        logger.error(f"Error searching headlines with keywords '{keyword}': {str(e)}")
         raise
+
+
 
 
 
