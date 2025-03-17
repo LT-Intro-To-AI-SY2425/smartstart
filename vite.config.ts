@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     watch: {
-      ignored: ["**/*.db", "**/*.db-journal"],
+      ignored: ["**/*.db", "**/*.db-journal", "./instance/*"],
     },
   },
 });

@@ -16,7 +16,9 @@ class Message(db.Model):
     role = db.Column(db.String(10), nullable=False)
     text = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(UTC))
-    function_calls = db.relationship('FunctionCall', backref='message', lazy=True, cascade='all, delete-orphan')
+    function_calls = db.relationship(
+        'FunctionCall', backref='message', lazy=True, cascade='all, delete-orphan'
+    )
 
     __table_args__ = (
         db.UniqueConstraint('id', name='unique_message_id'),

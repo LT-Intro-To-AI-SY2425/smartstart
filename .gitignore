@@ -27,5 +27,6 @@ venv
 *.db
 __pycache__/
 
+instance/*
 # myles wtf
 .env

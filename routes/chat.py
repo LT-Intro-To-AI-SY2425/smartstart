@@ -145,20 +145,26 @@ def clear_conversation(user_id):
         conversation = Conversation.query.filter_by(user_id=user_id).first()
         if not conversation:
             return error_response("Conversation not found", 404)
-        
-        # delete all messages (function calls will be deleted via cascade)
-        Message.query.filter_by(conversation_id=conversation.id).delete()
-        
-        # delete the conversation
-        Conversation.query.filter_by(user_id=user_id).delete()
-        
+
+        messages = Message.query.filter_by(conversation_id=conversation.id).all()
+
+        # delete function calls associated with messages before deleting messages, no clue why this dosent work in the db model
+        # somewhat sure that this is an sqlite thing
+        message_ids = [msg.id for msg in messages]
+        if message_ids:
+            FunctionCall.query.filter(FunctionCall.message_id.in_(message_ids)).delete(synchronize_session=False)
+
+        Message.query.filter_by(conversation_id=conversation.id).delete(synchronize_session=False)
+
+        db.session.delete(conversation)
+
         db.session.commit()
-        
+
         return jsonify({
             "status": "success",
             "message": "Conversation cleared successfully"
         })
     except Exception as e:
         db.session.rollback()
-        logger.error(f"error clearing conversation: {str(e)}")
+        logger.error(f"Error clearing conversation: {str(e)}")
         return error_response(str(e), 500)

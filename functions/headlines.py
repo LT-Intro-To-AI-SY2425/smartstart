@@ -9,6 +9,7 @@
 # And they want to see me pick back up, well, where'd I leave it at?
 
 import logging
+import time
 from models import db, Headlines
 from fuzzywuzzy import fuzz
 from typing import List, Dict
@@ -17,7 +18,8 @@ from sqlalchemy import func, text
 from functools import lru_cache
 import json
 from rapidfuzz import process, fuzz
-
+import re
+9
 logger = logging.getLogger(__name__)
 
 def json_serializable_result(result):
@@ -26,12 +28,11 @@ def json_serializable_result(result):
 
 # ai fuckery below!!!! so sorry
 
-def search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> List[Dict]:
+def search_headlines_by_keyword(keyword: str, limit: int) -> List[Dict]:
     """Cached version of search_headlines_by_keyword. Search headlines using fuzzy string matching. All parameters are required. Returns a list of dicts.
     
     Args:
         keyword: the search term to look for in headlines
-        min_similarity: minimum similarity ratio (0-100) for fuzzy matching
         limit: maximum number of results to return
         
     Returns:
@@ -39,7 +40,7 @@ def search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -
     """
     logger.info(f"searching headlines with keyword: {keyword}")
 
-    return cached_search_headlines_by_keyword(keyword, min_similarity, limit)
+    return cached_search_headlines_by_keyword(keyword, 75, limit)
 
 @lru_cache(maxsize=100)
 def cached_search_headlines_by_keyword(keyword: str, min_similarity: int, limit: int) -> List[Dict]:
@@ -67,19 +68,33 @@ def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limi
     Returns:
         list of dicts containing headline text, date, similarity score, and link
     """    
+    start_time = time.time()
+    
     try:
         logger.info(f"searching headlines from database with keywords: {keyword}")
 
+        prep_start_time = time.time()
         # da
         keywords = [k.strip() for k in keyword.split(',')]
 
+        prep_elapsed_time = time.time() - prep_start_time
+        logger.debug(f"keyword preparation took {prep_elapsed_time:.4f} seconds")
+
+        query_start_time = time.time()
         # more da
-        like_conditions = [f"LOWER(Headline) LIKE LOWER(:keyword{i})" for i in range(len(keywords))]
+        like_conditions = [
+            f"LOWER(Headline) REGEXP '\\b{keywords[i]}\\b|{keywords[i]}-' " for i in range(len(keywords))
+        ]
 
         # more more da
         query_conditions = " OR ".join(like_conditions)
-
         query_params = {f"keyword{i}": f"%{keywords[i]}%" for i in range(len(keywords))}
+
+
+        query_elapsed_time = time.time() - query_start_time
+        logger.debug(f"query construction took {query_elapsed_time:.4f} seconds")
+
+        execute_start_time = time.time()
 
         # database query:	O(N)	     ->  O(N) (but likely O(log N) with indexing)
         # fuzzy matching:	O(N * m)     ->  O(limit * 5 * m)
@@ -93,8 +108,13 @@ def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limi
 
         fetched_headlines = db.session.execute(query, {**query_params, 'limit': limit * 5}).fetchall()
 
+        execute_elapsed_time = time.time() - execute_start_time
+        logger.debug(f"SQL execution took {execute_elapsed_time:.4f} seconds")
+
         if not fetched_headlines:
             return []
+
+        process_start_time = time.time()
 
         headlines_list = [(row[0], row[1], row[2]) for row in fetched_headlines]
 
@@ -103,16 +123,25 @@ def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limi
             for h, d, u, s in (
                 (h, d, u, fuzz.partial_ratio(keyword.lower(), h.lower())) for h, d, u in headlines_list
             )
-            if s >= min_similarity
+            if s >= min_similarity and re.search(r'\b' + re.escape(keywords[0]) + r'\b', h.lower())  # Match full word
         ]
+
+        process_elapsed_time = time.time() - process_start_time
+        logger.debug(f"result processing took {process_elapsed_time:.4f} seconds")
+
+        sort_start_time = time.time()
 
         results = sorted(matched_headlines, key=lambda x: x['similarity'], reverse=True)[:limit]
 
-        logger.debug(f"Found {len(results)} matching headlines for '{keyword}'")
+        sort_elapsed_time = time.time() - sort_start_time
+        logger.debug(f"sorting results took {sort_elapsed_time:.4f} seconds")
+
+        total_elapsed_time = time.time() - start_time
+        logger.info(f"found {len(results)} matching headlines for '{keyword}' in {total_elapsed_time:.4f} seconds")
         return results
 
     except Exception as e:
-        logger.error(f"Error searching headlines with keywords '{keyword}': {str(e)}")
+        logger.error(f"error searching headlines with keywords '{keyword}': {str(e)}")
         raise
 
 
