@@ -19,8 +19,30 @@ from functools import lru_cache
 import json
 from rapidfuzz import process, fuzz
 import re
-9
+
 logger = logging.getLogger(__name__)
+
+political_leans = {
+    "cnn.com": -1.30,
+    "foxnews.com": 4.00,
+    "msnbc.com": -3.71,
+    "nytimes.com": -2.20,
+    "bbc.com": -0.80,
+    "bbc.co.uk": -0.80,
+    "time.com": -2.30,
+    "usatoday.com": -2.00,
+    "washingtonpost.com": -1.63,
+    "cnbc.com": -0.90,
+    "dailymail.co.uk": 4.00,
+    "guardian.co.uk": -3.50,
+    "theguardian.com": -3.50
+}
+
+def get_political_lean(url: str) -> tuple[str, float]:
+    for domain, lean in political_leans.items():
+        if domain in url.lower():
+            return domain, lean
+    return '', 0.00
 
 def json_serializable_result(result):
     """converts the result to JSON serializable format, returning a python object (not a string)"""
@@ -66,39 +88,31 @@ def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limi
         limit: maximum number of results to return
         
     Returns:
-        list of dicts containing headline text, date, similarity score, and link
-    """    
+        list of dicts containing headline text, date, similarity score, political_lean, and link
+        political_leans are -4 to +4, with -4 being far left, 0 being perfectly neuteral, and +4 being far right. 
+    """        
     start_time = time.time()
     
     try:
         logger.info(f"searching headlines from database with keywords: {keyword}")
 
         prep_start_time = time.time()
-        # da
         keywords = [k.strip() for k in keyword.split(',')]
-
         prep_elapsed_time = time.time() - prep_start_time
         logger.debug(f"keyword preparation took {prep_elapsed_time:.4f} seconds")
 
         query_start_time = time.time()
-        # more da
         like_conditions = [
             f"LOWER(Headline) REGEXP '\\b{keywords[i]}\\b|{keywords[i]}-' " for i in range(len(keywords))
         ]
-
-        # more more da
         query_conditions = " OR ".join(like_conditions)
         query_params = {f"keyword{i}": f"%{keywords[i]}%" for i in range(len(keywords))}
-
 
         query_elapsed_time = time.time() - query_start_time
         logger.debug(f"query construction took {query_elapsed_time:.4f} seconds")
 
         execute_start_time = time.time()
 
-        # database query:	O(N)	     ->  O(N) (but likely O(log N) with indexing)
-        # fuzzy matching:	O(N * m)     ->  O(limit * 5 * m)
-        # sorting	    :   O(N log N)   ->  O(limit log limit)
         query = text(f"""
             SELECT Headline, Date, URL FROM headlines
             WHERE {query_conditions}
@@ -107,7 +121,6 @@ def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limi
         """)
 
         fetched_headlines = db.session.execute(query, {**query_params, 'limit': limit * 5}).fetchall()
-
         execute_elapsed_time = time.time() - execute_start_time
         logger.debug(f"SQL execution took {execute_elapsed_time:.4f} seconds")
 
@@ -119,20 +132,26 @@ def search_headlines_by_keyword_uncached(keyword: str, min_similarity: int, limi
         headlines_list = [(row[0], row[1], row[2]) for row in fetched_headlines]
 
         matched_headlines = [
-            {'headline': h, 'date': d.isoformat() if isinstance(d, datetime) else d, 'similarity': s, 'link': u}
+            {
+                'headline': h,
+                'date': d.isoformat() if isinstance(d, datetime) else d,
+                'similarity': s,
+                'link': u,
+                'matched_publication': matched_pub,
+                'political_lean': political_lean
+            }
             for h, d, u, s in (
                 (h, d, u, fuzz.partial_ratio(keyword.lower(), h.lower())) for h, d, u in headlines_list
             )
-            if s >= min_similarity and re.search(r'\b' + re.escape(keywords[0]) + r'\b', h.lower())  # Match full word
+            if s >= min_similarity and re.search(r'\b' + re.escape(keywords[0]) + r'\b', h.lower())
+            for matched_pub, political_lean in [get_political_lean(u)]
         ]
 
         process_elapsed_time = time.time() - process_start_time
         logger.debug(f"result processing took {process_elapsed_time:.4f} seconds")
 
         sort_start_time = time.time()
-
         results = sorted(matched_headlines, key=lambda x: x['similarity'], reverse=True)[:limit]
-
         sort_elapsed_time = time.time() - sort_start_time
         logger.debug(f"sorting results took {sort_elapsed_time:.4f} seconds")
 

@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import clsx from "clsx";
 import { TypingText } from "../../components/Typing";
 import Threads from "../../components/Threads/Threads";
-import { FunctionCall, FunctionName } from "../../types/chat";
+import {
+  FunctionCall,
+  FunctionName,
+  SearchHeadlinesByKeywordOutput,
+} from "../../types/chat";
 import { motion, AnimatePresence } from "framer-motion";
+import { getPoliticalBiasWarnings, HeadlineWarning } from "./headlines";
+import { useFlashes } from "../../hooks/useFlashes";
 
 interface MessageProps {
   role: "user" | "assistant";
@@ -83,6 +89,31 @@ export function MessageBubble({
   isLoading = false,
   function_calls = [],
 }: MessageProps) {
+  const { addFlash } = useFlashes();
+
+  useEffect(() => {
+    const politicalLeans = function_calls
+      .filter((call) => call.function_name === "search_headlines_by_keyword")
+      .flatMap((call) => {
+        const outputs = call.outputs as {
+          result: SearchHeadlinesByKeywordOutput;
+        };
+        return Array.isArray(outputs.result) ? outputs.result : [];
+      });
+
+    if (politicalLeans.length > 0 && isNew) {
+      const warnings = getPoliticalBiasWarnings(politicalLeans);
+      Object.values(warnings).forEach((warning: HeadlineWarning) => {
+        addFlash({
+          id: warning.message,
+          message: warning.message,
+          type: "warning",
+          title: "Political Bias Acknowledgment",
+        });
+      });
+    }
+  }, [function_calls]);
+
   return (
     <div className="flex">
       <div
@@ -104,7 +135,25 @@ export function MessageBubble({
           <>
             <TypingText text={text} dontType={role !== "assistant" || !isNew} />
             {role === "assistant" && (
-              <FunctionCallsWrapper calls={function_calls} />
+              <>
+                {/* <div className="mt-2">
+                  {politicalLeans.map((leanObj, index) => (
+                    <div
+                      key={index}
+                      className={`flex justify-between p-2 rounded-md ${getColorForLean(
+                        leanObj.political_lean
+                      )}`}
+                    >
+                      <span>{leanObj.headline}</span>
+                      <span className="font-bold">
+                        {getDirection(leanObj.political_lean)}
+                      </span>
+                    </div>
+                  ))}
+                </div> */}
+
+                <FunctionCallsWrapper calls={function_calls} />
+              </>
             )}
           </>
         )}

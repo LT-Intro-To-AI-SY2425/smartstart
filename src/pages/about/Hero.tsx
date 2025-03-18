@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "../../components/Button";
 import Waves from "../../components/Waves";
 import { Mark } from "../../components/Logo";

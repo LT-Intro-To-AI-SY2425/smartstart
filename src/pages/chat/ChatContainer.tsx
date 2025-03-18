@@ -1,4 +1,3 @@
-import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Logo, Mark } from "../../components/Logo";
 import { ChatInput } from "./ChatInput";
@@ -92,7 +91,7 @@ function Chat() {
                   />
                 </DropdownButton>
                 <DropdownMenu className="min-w-64" anchor="bottom end">
-                  <DropdownItem to="/about">
+                  <DropdownItem to="/">
                     <BookOpenIcon />
                     <DropdownLabel>About</DropdownLabel>
                   </DropdownItem>

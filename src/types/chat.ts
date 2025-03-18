@@ -3,8 +3,7 @@ export type FunctionName =
   | "get_available_dates"
   | "get_available_commotities"
   | "get_closest_date_commodity_price"
-  | "get_headlines_by_date"
-  | "get_headlines_by_keyword";
+  | "search_headlines_by_keyword";
 
 // input types for each function
 export interface GetAvailableDatesInput {
@@ -21,24 +20,41 @@ export interface GetClosestDateCommodityPriceInput {
   day: number;
 }
 
+export interface SearchHeadlinesByKeywordInput {
+  keyword: string;
+  limit: number;
+}
+
 // output types for each function
 export type GetAvailableDatesOutput = string[]; // array of ISO date strings
 export type GetAvailableCommoditiesOutput = string[]; // array of commodity names
 export type GetClosestDateCommodityPriceOutput = [string, number | null]; // [ISO date string, price]
+export type SearchHeadlinesByKeywordOutput = {
+  headline: string;
+  date: string;
+  similarity: number;
+  link: string;
+  political_lean: number;
+  matched_publication: string;
+}[];
 
 // type map connecting function names to their input/output types
 export interface FunctionTypeMap {
   get_available_dates: {
     inputs: GetAvailableDatesInput;
-    outputs: GetAvailableDatesOutput;
+    outputs: { result: GetAvailableDatesOutput };
   };
   get_available_commotities: {
     inputs: GetAvailableCommoditiesInput;
-    outputs: GetAvailableCommoditiesOutput;
+    outputs: { result: GetAvailableCommoditiesOutput };
   };
   get_closest_date_commodity_price: {
     inputs: GetClosestDateCommodityPriceInput;
-    outputs: GetClosestDateCommodityPriceOutput;
+    outputs: { result: GetClosestDateCommodityPriceOutput };
+  };
+  search_headlines_by_keyword: {
+    inputs: SearchHeadlinesByKeywordInput;
+    outputs: { result: SearchHeadlinesByKeywordOutput }; // da code
   };
 }
 

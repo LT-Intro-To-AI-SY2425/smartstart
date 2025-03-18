@@ -19,7 +19,7 @@ interface TextSegment {
 
 export function TypingText({
   text,
-  speed = 50,
+  speed = 30,
   className,
   dontType = false,
 }: {
